@@ -9,7 +9,9 @@ using namespace std;
 // Bubble Sort
 // Shell sort
 // Merge Sort
-
+// Quick Sort
+// Heap Sort
+// STL implementation uses mix for insertion sort, quick sort, heap sort for best time complexity
 
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -44,7 +46,7 @@ void selection_sort ( T arr[], int n )
         }
 
         // swap i and min_ind
-        swap<T>( &arr[ i ], &arr[ min_ind ] );
+        swap< T >( &arr[ i ], &arr[ min_ind ] );
 
     }
 
@@ -197,3 +199,136 @@ void merge_sort ( T arr[], int l, int r )
 //-----------------------------------------------------------------------------------------------------------------------
 
 
+// insertion sort in a section of array used in quick sort
+template < typename T >
+void insertion_sort ( T arr[], int l, int r )
+{
+    
+    // iterate in the array 
+    for(int i = l + 1; i < r + 1; i++)
+    {
+        // insertion of new element in the sorted part
+        T new_ele = arr[ i ];
+        for(int j = i - 1; j >= l && arr[j] > new_ele; j--)
+        {   
+            arr[ j + 1 ] = arr[ j ]; 
+            arr[ j ] = new_ele;
+        }
+    }
+}
+
+template < typename T>
+const T & median ( T arr[], int l, int r )
+{
+
+    // sort three values 
+    int mid = ( l + r ) / 2;
+
+    if( arr[ mid ] < arr[ l ])
+    {   swap< T >( &arr[ l ], &arr[ mid ] ); }
+
+    if( arr[ r ] < arr[ l ])    
+    {   swap< T >( &arr[ l ], &arr[ r ] ); }
+
+    if( arr[ r ] < arr[ mid ])
+    {   swap< T >( &arr[ r ], &arr[ mid ] ); }
+
+    // swap the midean value with second last element
+    swap< T >( &arr[ mid ], &arr[ r - 1 ]);
+    return arr[ r - 1 ];
+}
+
+template < typename T> 
+void quick_sort ( T arr[], int l, int r )
+{
+
+    if( l + 10 <= r )
+    {
+        // find the pivot element
+        T pivot = median< T >( arr, l, r );
+
+        // move all the elements less than pivot to left and all elemnts greater than pivot to right
+        int i = l, j = r - 1;
+        for( ; ; )
+        {
+            while( arr[ ++i ] < pivot ) { }
+            while( arr[ --j ] > pivot ) { }
+
+            if( i < j)
+            {   swap< T >( &arr[ i ], &arr[ j ] );  }
+            else
+            {   break;  }
+        }
+
+        // restore the pivot to correct location
+        swap< T >( &arr[ i ], &arr[ r - 1] );
+
+        // sort the rest two halfs
+        quick_sort< T >( arr, l, i - 1 );
+        quick_sort< T >( arr, i + 1, r );
+
+    }
+    // using insertion sort for small array for better time complexity
+    else
+    {
+        insertion_sort< T >( arr, l, r );
+    }
+    
+
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------------
+
+
+template< typename T >
+void perc_down( T arr[], int i, int n )
+{
+    T prev;
+    int child;
+
+    // lambda function to find index of left child
+    auto left_child = []( int i ){  return i * 2 + 1;   };
+
+    // make a max heap of arr i - n
+    for(prev = arr[ i ]; left_child( i ) < n; i = child)
+    {
+        child = left_child( i );
+
+        // finding the largest element 
+        if( child != n - 1 && arr[ child ] < arr[ child + 1 ] )
+        {   child++;    }
+
+        //  moving largest element to the parent 
+        if( prev < arr[ child ] )
+        {   arr[ i ] = arr[ child ];  }
+
+        else
+        {   break;  }
+
+    }
+
+    arr[ i ] = prev;
+
+}
+
+
+template < typename T >
+void heap_sort( T arr[], int n )
+{
+
+    // make Max heap
+    for(int i = n / 2; i >= 0; i--)
+    {   perc_down( arr, i, n );    }
+
+    // sorting array by poping max element from max heap and putting it in correct location
+    for(int i = n - 1; i > 0; i--)
+    {
+        swap< T >( &arr[ 0 ], &arr[ i ] );
+        perc_down( arr, 0, i );
+    }
+
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------------
