@@ -116,7 +116,7 @@ int interpolation_search( T arr[], int n, T val )
     {
 
         // finding a possible index for the value while keeping uniform distribution in mind
-        int ind = s + ( double( ( e - s ) / ( arr[s] - arr[e] ) ) * ( val - arr[ s ] ) );
+        int ind = s + ( double( ( e - s ) / ( arr[ e ] - arr[ s ] ) ) * ( val - arr[ s ] ) );
 
         // if value at ind is equal to desire value then return the index
         if( arr[ ind ] == val )
